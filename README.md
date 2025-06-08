@@ -1,13 +1,11 @@
 # Machine Learning Project - Geervan Thanra
 
-# Project Overview
+## Project Overview
 A new information era has been ushered in by the quick expansion of data collection. The usage of data to develop more effective systems is where recommendation systems are useful.  One kind of information filtering system is a recommendation system, which enhances the quality of search results by presenting items that are more pertinent to the search query or are connected to the user's search history. Recommendation systems (RS) belong to the category of information filtering systems designed to predict the preference users would give to a topic. They mimic the social action of relying on recommendations from others and augment the process further (Khanal, 2020). They are employed to forecast a user's preference or rating for a product. Amazon uses it to suggest products to customers, YouTube uses it to decide which video to play next on autoplay, and Facebook uses it to recommend pages to like and people to follow. Moreover, companies like Netflix and Spotify depend highly on the effectiveness of their recommendation engines for their business and success.
 
 There are several ways to build a recommendation system, content based filtering is used in this notebook. In this notebook, the solution will be used to see recommendation result. Based on several parameters, the model will recommend different types of movies based to the user. Dataset being used in this notebook is from kaggle (https://www.kaggle.com/datasets/tmdb/tmdb-movie-metadata).
 
-<br>
 Referensi :
-<br>
 Khanal, Shristi Shakya, et al. "A systematic review: machine learning based recommendation systems for e-learning." Education and Information Technologies 25.4 (2020): 2635-2664.
 
 
@@ -26,15 +24,14 @@ Khanal, Shristi Shakya, et al. "A systematic review: machine learning based reco
 - Comparing the recommendations with a random
 
 
-# Data Understanding
+## Data Understanding
 
 The first dataset contains the following features:
-<br>
+
 - movie_id - A unique identifier for each movie.
 - cast - The name of lead and supporting actors.
 - crew - The name of Director, Editor, Composer, Writer etc.
-<br>
-<br>
+
 
 The second dataset contrains the following features:
 - budget - The budget in which the movie was made.
@@ -57,33 +54,70 @@ The second dataset contrains the following features:
 - vote_average - average ratings the movie recieved.
 - vote_count - the count of votes recieved.
 
+Both datasets will be combined to use all the features available. In total there will be 4809 rows of data with 23 columns. The amount of rows will be reduced after cleaning. This is the dataset that will be used in this notebook.
+
+
 Based on graphs and the data in the dataset :
 - There are several null values in tagline, release date, overview, runtime, and homepage
 - there are numerical and non numerical datas
 - Most ratings is at 7-8
 - The most common language is english
-- Most of the moviess ehre has been released
+- Most of the moviess here has been released
 
 Steps needed to do in data preparation:
 -  handle the null values, delete the rows containing those movie_id
 -  filter the unused columns
+-  remove id as movie_id exist
 
-# Data Preparations
+## Data Preparation
 
-## Steps
-- add no taglines in null values of tagline
-- remove null valls in overview, runtime, and release date
-- remove id column
+### Steps
+- remove the id column as movie_id is just the same column
+- change all null values in the tagline column into "No tagline"
+- change all null values in the homepage column into "No homepage"
+- drop all the null values from release date, overview, and runtime
 
 Null values must be removed from the dataset so the model can efficiently learn.
 
-# Modelling - Content Based Filtering
+For feature extraction, TF-IDF will be used on overview column. This technique converts each movie’s plot summary into a numerical vector that reflects the importance of each word relative to the entire collection of overviews. Words that appear frequently in a specific movie’s overview but rarely across all movies get higher weights, capturing what makes that movie’s description unique.
 
-TF-IDF on overview column. his technique converts each movie’s plot summary into a numerical vector that reflects the importance of each word relative to the entire collection of overviews. Words that appear frequently in a specific movie’s overview but rarely across all movies get higher weights, capturing what makes that movie’s description unique.
+From the cast, crew and keywords features, we need to extract the three most important actors, the director and the keywords associated with that movie into a new column, this is so the model can learn more from the data and make better recommendations.
 
-Once all the overviews are transformed into these TF-IDF vectors, we use cosine similarity to measure how alike two movies are based on their plots. Cosine similarity calculates the cosine of the angle between two vectors in a multi-dimensional space. A similarity score of 1 means the plots are identical in terms of word distribution, while a score close to 0 means they share very little in common. By computing cosine similarity between all pairs of movies, we can find which films have the most similar story descriptions and use that information to recommend movies that are likely related in content.
+## Modelling
 
-# Evaluation
-For this section, the model will be evaluated. To evaluate how well the recommendation system works, recommended movies are to see the similarity than the original movie, based on their plot descriptions. A random set of movies will be picked, and for each one, its top recommended movies using the system will be found. Then, to have something to compare against, the same number of random movies from the dataset will be picked. For each original movie, the average similarity between its plot and those of both the recommended movies and the random movies will be measured. 
 
-The results show that the movies recommended by the system are much more similar to the original films compared to randomly picked movies. On average, the similarity between a movie and its recommended titles was around 0.114, while the similarity with random movies was close to zero. This means the recommendations aren’t just random—they actually reflect meaningful connections based on the movie plots. 
+Once all the values in final column are transformed into these TF-IDF vectors, we use cosine similarity to measure how alike two movies are based on their plots. Cosine similarity calculates the cosine of the angle between two vectors in a multi-dimensional space. A similarity score of 1 means the plots are identical in terms of word distribution, while a score close to 0 means they share very little in common. By computing cosine similarity between all pairs of movies, we can find which films have the most similar story descriptions and use that information to recommend movies that are likely related in content.
+
+For testing this model, 2 recommendations will be done. For "Avatar" the model recommends : 
+2405                     Aliens
+206         Clash of the Titans
+587                   The Abyss
+43         Terminator Salvation
+282                   True Lies
+132         Wrath of the Titans
+1450                   Sabotage
+47      Star Trek Into Darkness
+3442             The Terminator
+3187            The Ice Pirates
+
+For "JFK", the model recommends :
+1530                     Criminal
+884              Zero Dark Thirty
+737     Jack Ryan: Shadow Recruit
+188                          Salt
+969                     Assassins
+2143                         Milk
+2505                 The Homesman
+484                   The Postman
+2010        In the Valley of Elah
+2280           Dances with Wolves
+
+## Evaluation
+For evaluation, Precision@K will be used. Precision@K is a common evaluation metric for recommender systems and information retrieval. It measures how many of the top-K recommended items are actually relevant to the user.
+
+Equation : 
+Precision@K = (Number of relevant items in top K recommendations) / K
+
+Precision@K is calculated as the number of relevant items in the top-K recommendations divided by K. For example, if a recommendation system suggests 10 movies to a user and only 1 of them is actually something the user likes (as per the ground-truth), then the Precision@10 would be 0.1, or 10%.
+
+In this context, the model achieved a Precision@5 score of 0.176, meaning that, on average, only 17% of the top-5 recommended items were relevant for the users. 
