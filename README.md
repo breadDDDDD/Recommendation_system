@@ -21,7 +21,7 @@ Khanal, Shristi Shakya, et al. "A systematic review: machine learning based reco
 
 ### Solution Statements
 - Using cosine similiearity and TF-IDF for content based filtering
-- Comparing the recommendations with a random
+- Comparing the recommendations with precision@k
 
 
 ## Data Understanding
@@ -89,28 +89,28 @@ From the cast, crew and keywords features, we need to extract the three most imp
 Once all the values in final column are transformed into these TF-IDF vectors, we use cosine similarity to measure how alike two movies are based on their plots. Cosine similarity calculates the cosine of the angle between two vectors in a multi-dimensional space. A similarity score of 1 means the plots are identical in terms of word distribution, while a score close to 0 means they share very little in common. By computing cosine similarity between all pairs of movies, we can find which films have the most similar story descriptions and use that information to recommend movies that are likely related in content.
 
 For testing this model, 2 recommendations will be done. For "Avatar" the model recommends : 
-2405                     Aliens
-206         Clash of the Titans
-587                   The Abyss
-43         Terminator Salvation
-282                   True Lies
-132         Wrath of the Titans
-1450                   Sabotage
-47      Star Trek Into Darkness
-3442             The Terminator
+2405                     Aliens,
+206         Clash of the Titans,
+587                   The Abyss,
+43         Terminator Salvation,
+282                   True Lies,
+132         Wrath of the Titans,
+1450                   Sabotage,
+47      Star Trek Into Darkness,
+3442             The Terminator,
 3187            The Ice Pirates
 
 For "JFK", the model recommends :
-1530                     Criminal
-884              Zero Dark Thirty
-737     Jack Ryan: Shadow Recruit
-188                          Salt
-969                     Assassins
-2143                         Milk
-2505                 The Homesman
-484                   The Postman
-2010        In the Valley of Elah
-2280           Dances with Wolves
+1530                     Criminal,
+884              Zero Dark Thirty,
+737     Jack Ryan: Shadow Recruit,
+188                          Salt,
+969                     Assassins,
+2143                         Milk,
+2505                 The Homesman,
+484                   The Postman,
+2010        In the Valley of Elah,
+2280           Dances with Wolves,
 
 ## Evaluation
 For evaluation, Precision@K will be used. Precision@K is a common evaluation metric for recommender systems and information retrieval. It measures how many of the top-K recommended items are actually relevant to the user.
